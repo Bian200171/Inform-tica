@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Calcular Promedio</title>
+  <title>Confirmar Asistencia a la Fiesta</title>
   <style>
-    /* --- Estilos básicos --- */
+    /* --- Estilos generales --- */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -15,29 +15,53 @@
     body {
       height: 100vh;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
       font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(135deg, #d1dd24, #1b6dda);
+      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
       color: #0f172a;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     h1 {
+      margin-bottom: 20px;
       font-size: 1.8rem;
-      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    form {
+      background: white;
+      padding: 25px 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(15,23,42,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 300px;
+      text-align: center;
+    }
+
+    input, select, button {
+      font-size: 1rem;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.2s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: #6366f1;
     }
 
     button {
-      padding: 12px 20px;
-      font-size: 1rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 8px;
-      background: linear-gradient(90deg, #851313, #ffc013);
+      background: linear-gradient(90deg, #6366f1, #7c3aed);
       color: white;
+      font-weight: 600;
       cursor: pointer;
+      border: none;
       transition: transform 0.15s ease, opacity 0.2s ease;
     }
 
@@ -46,52 +70,57 @@
       opacity: 0.9;
     }
 
-    #resultado {
+    #mensaje {
       margin-top: 20px;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 600;
+      text-align: center;
     }
 
-    /* Colores según el resultado */
-    .aprobado { color: #16a34a; }
-    .desaprobado { color: #dc2626; }
+    .asistira { color: #16a34a; }
+    .no-asistira { color: #dc2626; }
   </style>
 </head>
 <body>
-  <h1>Calcular Promedio</h1>
+  <h1>Confirmá tu asistencia a la fiesta 🎊</h1>
 
-  <button id="btn-calcular">Calcular promedio</button>
+  <form id="form-asistencia">
+    <input type="text" id="nombre" placeholder="Tu nombre" required />
+    <select id="asistencia" required>
+      <option value="">¿Vas a asistir?</option>
+      <option value="sí">Sí, voy a asistir</option>
+      <option value="no">No podré ir</option>
+    </select>
+    <button type="submit">Enviar</button>
+  </form>
 
-  <div id="resultado"></div>
+  <div id="mensaje"></div>
 
   <script>
-    const boton = document.getElementById("btn-calcular");
-    const resultado = document.getElementById("resultado");
+    const form = document.getElementById("form-asistencia");
+    const mensaje = document.getElementById("mensaje");
 
-    boton.addEventListener("click", () => {
-      // Pedir las 3 notas
-      const n1 = Number(prompt("Ingresá la primera nota:"));
-      const n2 = Number(prompt("Ingresá la segunda nota:"));
-      const n3 = Number(prompt("Ingresá la tercera nota:"));
+    form.addEventListener("submit", (e) => {
+      e.preventDefault(); // Evita recargar la página
 
-      // Validar que sean números válidos
-      if (isNaN(n1) || isNaN(n2) || isNaN(n3)) {
-        resultado.textContent = "⚠️ Debés ingresar solo números válidos.";
-        resultado.className = "";
+      const nombre = document.getElementById("nombre").value.trim();
+      const asistencia = document.getElementById("asistencia").value;
+
+      if (!nombre || !asistencia) {
+        mensaje.textContent = "⚠️ Completá todos los campos antes de enviar.";
+        mensaje.className = "";
         return;
       }
 
-      // Calcular el promedio
-      const promedio = (n1 + n2 + n3) / 3;
-
-      // Mostrar resultado
-      if (promedio >= 6) {
-        resultado.textContent =  Promedio; {promedio.toFixed(2)}  Aprobado;
-        resultado.className = "aprobado";
+      if (asistencia === "sí") {
+        mensaje.textContent = 🎉 ¡Genial, ${nombre}! Nos alegra que vengas a la fiesta.;
+        mensaje.className = "asistira";
       } else {
-        resultado.textContent =  Promedio; {promedio.toFixed(2)} Desaprobado;
-        resultado.className = "desaprobado";
+        mensaje.textContent = 😢 Qué lástima, ${nombre}. Te vamos a extrañar en la fiesta.;
+        mensaje.className = "no-asistira";
       }
+
+      form.reset(); // Limpia los campos del formulario
     });
   </script>
 </body>
