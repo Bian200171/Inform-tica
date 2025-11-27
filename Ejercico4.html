@@ -3,75 +3,165 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Juego de Adivinanza</title>
+  <title>Contador decreciente</title>
   <style>
-    /* Estilos generales */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    /* Reset simple */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Página */
+    html, body {
+      height: 100%;
+      font-family: Inter, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(135deg,#f5f7fa,#e9eff8);
+      color: #0f172a;
+      -webkit-font-smoothing:antialiased;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    body {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(135deg, #f5f7fa, #e2e8f0);
-      color: #0f172a;
-      transition: background-color 0.3s ease, color 0.3s ease;
+    /* Tarjeta */
+    .card {
+      width: min(420px, 92%);
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(15,23,42,0.08);
+      padding: 28px;
+      text-align: center;
+      transition: transform .18s ease;
     }
+    .card:active { transform: translateY(2px); }
 
     h1 {
-      margin-bottom: 20px;
-      font-size: 1.8rem;
-      text-align: center;
+      font-size: 1.15rem;
+      margin-bottom: 10px;
+      color: #0b1220;
+    }
+    p.lead {
+      color: #475569;
+      margin-bottom: 18px;
+      font-size: .95rem;
     }
 
-    button {
-      padding: 12px 22px;
+    /* Display del número */
+    .counter {
+      font-weight: 700;
+      font-size: 4.25rem;
+      line-height: 1;
+      letter-spacing: -1px;
+      margin: 8px 0 18px 0;
+      display: inline-block;
+      min-width: 120px;
+      padding: 18px 22px;
+      border-radius: 12px;
+      background: linear-gradient(180deg,#f8fafc,#eef2ff);
+      border: 1px solid rgba(15,23,42,0.05);
+      box-shadow: inset 0 -6px 16px rgba(99,102,241,0.03);
+    }
+
+    /* Botón */
+    button.btn {
       font-size: 1rem;
-      font-weight: 600;
-      border: none;
+      padding: 12px 20px;
       border-radius: 10px;
-      background: linear-gradient(90deg, #6366f1, #7c3aed);
-      color: white;
+      border: none;
       cursor: pointer;
-      transition: transform 0.15s ease, opacity 0.2s ease;
-    }
-
-    button:hover {
-      transform: scale(1.05);
-      opacity: 0.9;
-    }
-
-    #mensaje {
-      margin-top: 25px;
-      font-size: 1.2rem;
       font-weight: 600;
+      background: linear-gradient(90deg,#6366f1,#7c3aed);
+      color: white;
+      box-shadow: 0 8px 20px rgba(99,102,241,0.18);
+      transition: transform .12s ease, opacity .12s ease;
+    }
+    button.btn:active { transform: translateY(1px) scale(.997); }
+    button.btn[disabled] {
+      opacity: .55;
+      cursor: not-allowed;
+      box-shadow: none;
+      background: linear-gradient(90deg,#cbd5e1,#e6edf7);
+      color: #64748b;
     }
 
-    /* Colores según resultado */
-    .correcto {
-      color: #16a34a;
+    /* Pequeño helper / reset */
+    .small {
+      margin-top: 12px;
+      color: #64748b;
+      font-size: .88rem;
     }
 
-    .incorrecto {
-      color: #dc2626;
+    /* Animación breve al cambiar el número */
+    .pulse {
+      animation: pulse-num .35s ease;
+    }
+    @keyframes pulse-num {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.08); opacity: .95; }
+      100% { transform: scale(1); opacity: 1; }
     }
   </style>
 </head>
 <body>
-  <h1>🎯 Juego de Adivinanza</h1>
+  <main class="card" role="main" aria-labelledby="title">
+    <h1 id="title">Contador decreciente</h1>
+    <p class="lead">Haz clic en el botón para disminuir el contador en 1. Comienza en 10.</p>
 
-  <button id="btn-jugar">Jugar</button>
+    <!-- Display del número -->
+    <div id="display" class="counter" aria-live="polite" aria-atomic="true">10</div>
 
-  <div id="mensaje"></div>
+    <!-- Botón -->
+    <div>
+      <button id="btn-decrease" class="btn" type="button" aria-label="Disminuir contador">Disminuir -1</button>
+    </div>
+
+    <div class="small" id="hint">Quedan <span id="left">10</span> clics.</div>
+  </main>
 
   <script>
-    // Número secreto fijo
-    const numeroSecreto = 7;
+    (function () {
+      // Estado inicial
+      let value = 10;
+      const display = document.getElementById('display');
+      const btn = document.getElementById('btn-decrease');
+      const left = document.getElementById('left');
 
-    const boton = document.getElement
+      // Actualiza la UI basada en el valor actual
+      function refreshUI() {
+        display.textContent = String(value);
+        left.textContent = String(value);
+        // añadir clase de animación temporal
+        display.classList.remove('pulse');
+        // forzar reflow para reiniciar la animación
+        void display.offsetWidth;
+        display.classList.add('pulse');
+
+        if (value <= 0) {
+          value = 0;
+          btn.disabled = true;
+          btn.textContent = 'Llegó a 0';
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Disminuir -1';
+        }
+      }
+
+      // Evento de clic
+      btn.addEventListener('click', function () {
+        if (value > 0) {
+          value -= 1;
+          refreshUI();
+        }
+      });
+
+      // accesibilidad: permitir tecla Enter/Space cuando el botón tiene foco
+      btn.addEventListener('keyup', function (e) {
+        if ((e.key === 'Enter' || e.key === ' ') && !btn.disabled) {
+          e.preventDefault();
+          btn.click();
+        }
+      });
+
+      // inicializar UI
+      refreshUI();
+    })();
+  </script>
+</body>
+</html>
