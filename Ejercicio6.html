@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Confirmar Asistencia a la Fiesta</title>
+  <title>Calcular Promedio</title>
   <style>
-    /* --- Estilos generales --- */
+    /* --- Estilos básicos --- */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -15,23 +15,22 @@
     body {
       height: 100vh;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
       font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(135deg, #920a0a, #0f3f80);
+      background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
       color: #0f172a;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     h1 {
-      margin-bottom: 20px;
       font-size: 1.8rem;
-      text-align: center;
+      margin-bottom: 25px;
     }
 
     form {
-      background: rgb(99, 11, 11);
+      background: white;
       padding: 25px 30px;
       border-radius: 12px;
       box-shadow: 0 8px 24px rgba(15,23,42,0.1);
@@ -39,25 +38,23 @@
       flex-direction: column;
       gap: 15px;
       width: 300px;
-      text-align: center;
     }
 
-    input, select, button {
+    input, button {
       font-size: 1rem;
       padding: 10px;
       border-radius: 8px;
       border: 1px solid #cbd5e1;
       outline: none;
-      width: 100%;
       transition: border-color 0.2s ease;
     }
 
-    input:focus, select:focus {
+    input:focus {
       border-color: #6366f1;
     }
 
     button {
-      background: linear-gradient(90deg, #6366f1, #7c3aed);
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
       color: white;
       font-weight: 600;
       cursor: pointer;
@@ -70,9 +67,63 @@
       opacity: 0.9;
     }
 
-    #mensaje {
+    #resultado {
       margin-top: 20px;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       font-weight: 600;
       text-align: center;
     }
+
+    /* Colores según resultado */
+    .aprobado { color: #16a34a; }
+    .desaprobado { color: #dc2626; }
+  </style>
+</head>
+<body>
+  <h1>Calcular Promedio de Notas</h1>
+
+  <form id="form-promedio">
+    <input type="number" id="nota1" placeholder="Primera nota" min="0" max="10" required>
+    <input type="number" id="nota2" placeholder="Segunda nota" min="0" max="10" required>
+    <input type="number" id="nota3" placeholder="Tercera nota" min="0" max="10" required>
+    <button type="submit">Calcular Promedio</button>
+  </form>
+
+  <div id="resultado"></div>
+
+  <script>
+    const form = document.getElementById("form-promedio");
+    const resultado = document.getElementById("resultado");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      // Capturar valores y convertirlos a número
+      const n1 = Number(document.getElementById("nota1").value);
+      const n2 = Number(document.getElementById("nota2").value);
+      const n3 = Number(document.getElementById("nota3").value);
+
+      // Validar datos
+      if (isNaN(n1) || isNaN(n2) || isNaN(n3)) {
+        resultado.textContent = "⚠️ Ingresá tres números válidos.";
+        resultado.className = "";
+        return;
+      }
+
+      // Calcular promedio
+      const promedio = (n1 + n2 + n3) / 3;
+
+      // Mostrar resultado
+      if (promedio >= 6) {
+        resultado.textContent = ✅ Promedio: ${promedio.toFixed(2)} — Aprobado;
+        resultado.className = "aprobado";
+      } else {
+        resultado.textContent = ❌ Promedio: ${promedio.toFixed(2)} — Desaprobado;
+        resultado.className = "desaprobado";
+      }
+
+      form.reset();
+    });
+  </script>
+</body>
+</html>
